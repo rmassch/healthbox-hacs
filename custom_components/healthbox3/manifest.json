@@ -1,0 +1,12 @@
+{
+  "domain": "healthbox3",
+  "name": "Healthbox 3",
+  "codeowners": [
+    "@rmassch"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/rmassch/healthbox3",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/rmassch/healthbox3/issues",
+  "version": "0.0.1"
+}

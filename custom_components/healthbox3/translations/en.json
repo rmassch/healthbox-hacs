@@ -1,0 +1,18 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "If you need help with the configuration have a look here: https://github.com/rmassch/healthbox3",
+                "data": {
+                    "ipaddress": "IP Address",
+                    "apikey": "API Key"
+                }
+            }
+        },
+        "error": {
+            "auth": "IP/API Key is wrong.",
+            "connection": "Unable to connect to the Healthbox 3 Unit.",
+            "unknown": "Unknown error occurred."
+        }
+    }
+}
