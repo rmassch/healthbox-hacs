@@ -77,4 +77,4 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             apikey=apikey,
             session=async_create_clientsession(self.hass),
         )
-        await client.async_get_data()
+        await client.async_enable_advanced_api_features()

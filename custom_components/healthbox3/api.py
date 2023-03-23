@@ -63,21 +63,33 @@ class Healthbox3ApiClient:
         )
         return data
 
-    async def async_set_title(self, value: str) -> any:
-        """Get data from the API."""
-        return await self._api_wrapper(
-            method="patch",
-            url="https://jsonplaceholder.typicode.com/posts/1",
-            data={"title": value},
-            headers={"Content-type": "application/json; charset=UTF-8"},
+    async def async_enable_advanced_api_features(self):
+        """Enable advanced API Features."""
+
+        await self._api_wrapper(
+            method="post",
+            url=f"http://{self._ipaddress}/v2/api/api_key",
+            data=f"{self._apikey}",
+            expect_json_error=True,
         )
+        await asyncio.sleep(2)
+        await self._async_validate_advanced_api_features()
+
+    async def _async_validate_advanced_api_features(self):
+        """Validate API Advanced Features."""
+        authentication_status = await self._api_wrapper(
+            method="get", url=f"http://{self._ipaddress}/v2/api/api_key/status"
+        )
+        if authentication_status["state"] != "valid":
+            raise Healthbox3ApiClientAuthenticationError
 
     async def _api_wrapper(
         self,
         method: str,
         url: str,
-        data: dict | None = None,
+        data: dict | str | None = None,
         headers: dict | None = None,
+        expect_json_error: bool = False,
     ) -> any:
         """Get information from the API."""
         try:
@@ -93,6 +105,8 @@ class Healthbox3ApiClient:
                         "Invalid credentials",
                     )
                 response.raise_for_status()
+                if expect_json_error:
+                    return await response.text()
                 return await response.json()
 
         except asyncio.TimeoutError as exception:
