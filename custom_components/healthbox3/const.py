@@ -118,7 +118,7 @@ class Healthbox3DataObject:
         self.rooms = hb3_rooms
 
     def _get_global_aqi_from_data(self, data: any) -> float | None:
-        """Set Global AQI from Data Object"""
+        """Set Global AQI from Data Object."""
         sensors = data["sensor"]
         for sensor in sensors:
             if sensor["type"] == "global air quality index":
