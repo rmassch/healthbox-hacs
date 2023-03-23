@@ -12,7 +12,8 @@ MANUFACTURER = "Renson"
 ATTRIBUTION = ""
 SCAN_INTERVAL = timedelta(seconds=5)
 
-SERVICE_BOOST_ROOM = "boost_room"
+SERVICE_START_ROOM_BOOST = "start_room_boost"
+SERVICE_STOP_ROOM_BOOST = "stop_room_boost"
 
 
 class Healthbox3RoomBoost:
@@ -97,6 +98,8 @@ class Healthbox3DataObject:
     description: str
     warranty_number: str
 
+    global_aqi: float = None
+
     rooms: list[Healthbox3Room]
 
     def __init__(self, data: any) -> None:
@@ -105,9 +108,19 @@ class Healthbox3DataObject:
         self.description = data["description"]
         self.warranty_number = data["warranty_number"]
 
+        self.global_aqi = self._get_global_aqi_from_data(data)
+
         hb3_rooms: list[Healthbox3Room] = []
         for room in data["room"]:
             hb3_room = Healthbox3Room(room, data["room"][room])
             hb3_rooms.append(hb3_room)
 
         self.rooms = hb3_rooms
+
+    def _get_global_aqi_from_data(self, data: any) -> float | None:
+        """Set Global AQI from Data Object"""
+        sensors = data["sensor"]
+        for sensor in sensors:
+            if sensor["type"] == "global air quality index":
+                return sensor["parameter"]["index"]["value"]
+        return None

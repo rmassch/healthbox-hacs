@@ -56,11 +56,17 @@ class Healthbox3DataUpdateCoordinator(DataUpdateCoordinator):
             session=async_get_clientsession(hass),
         )
 
-    async def boost_room(self, room_id: int, boost_level: int, boost_timeout: int):
-        """Boost HB3 Room."""
-        await self.api.async_boost_room(
+    async def start_room_boost(
+        self, room_id: int, boost_level: int, boost_timeout: int
+    ):
+        """Start Boosting HB3 Room."""
+        await self.api.async_start_room_boost(
             room_id=room_id, boost_level=boost_level, boost_timeout=boost_timeout
         )
+
+    async def stop_room_boost(self, room_id: int):
+        """Stop Boosting HB3 Room."""
+        await self.api.async_stop_room_boost(room_id=room_id)
 
     async def _async_update_data(self):
         """Update data via library."""

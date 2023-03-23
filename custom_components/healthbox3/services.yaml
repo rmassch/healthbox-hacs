@@ -1,19 +1,44 @@
-boost_room:
-  name: Boost Room
+start_room_boost:
+  name: Start Room Boost
   description: Boost the fans in a specific room.
   fields:
-    room_id:
-      name: Room ID
-      description: ID of the room
-      example: "1"
+    device_id:
+      name: Healthbox3 Room
+      description: Healthbox3 Room
       required: true
+      selector:
+        device:
+          integration: healthbox3
     boost_level:
       name: Level
       description: The boost %. Default is 100%
-      example: 100
       required: true
+      selector:
+        number:
+          min: 100
+          max: 200
+          step: 5
+          mode: slider
+          unit_of_measurement: "%"
     boost_timeout:
       name: Timeout
-      description: Duration of the boost in seconds
-      example: 500
+      description: Duration of the boost in minutes
       required: true
+      selector:
+        number:
+          min: 5
+          max: 120
+          step: 1
+          mode: slider
+          unit_of_measurement: minutes
+stop_room_boost:
+  name: Stop Room Boost
+  description: Stops Boosting the fans in a specific room.
+  fields:
+    device_id:
+      name: Healthbox3 Room
+      description: Healthbox3 Room
+      required: true
+      selector:
+        device:
+          integration: healthbox3

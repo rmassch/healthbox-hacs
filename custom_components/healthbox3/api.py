@@ -45,11 +45,20 @@ class Healthbox3ApiClient:
 
         return general_data
 
-    async def async_boost_room(
+    async def async_start_room_boost(
         self, room_id: int, boost_level: int, boost_timeout: int
     ) -> any:
-        """Boost HB3 Room."""
+        """Start Boosting HB3 Room."""
         data = {"enable": True, "level": boost_level, "timeout": boost_timeout}
+        await self._api_wrapper(
+            method="put",
+            url=f"http://{self._ipaddress}/v2/api/boost/{room_id}",
+            data=data,
+        )
+
+    async def async_stop_room_boost(self, room_id: int) -> any:
+        """Stop Boosting HB3 Room."""
+        data = {"enable": False}
         await self._api_wrapper(
             method="put",
             url=f"http://{self._ipaddress}/v2/api/boost/{room_id}",

@@ -10,8 +10,9 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import device_registry as dr
 
-from .const import DOMAIN, SERVICE_BOOST_ROOM
+from .const import DOMAIN, SERVICE_START_ROOM_BOOST, SERVICE_STOP_ROOM_BOOST
 from .coordinator import Healthbox3DataUpdateCoordinator
 
 PLATFORMS: list[Platform] = [
@@ -24,7 +25,7 @@ PLATFORMS: list[Platform] = [
 
 SERVICE_BOOST_ROOM_SCHEMA = vol.Schema(
     {
-        vol.Required("room_id"): cv.positive_int,
+        vol.Required("device_id"): cv.ATTR_DEVICE_ID,
         vol.Required("boost_level"): cv.positive_int,
         vol.Required("boost_timeout"): cv.positive_int,
     },
@@ -43,18 +44,32 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
-    async def boost_room(call: ServiceCall) -> None:
-        """Service call to add a new filter subscription to AdGuard Home."""
+    async def start_room_boost(call: ServiceCall) -> None:
+        """Service call to start boosting fans in a room."""
+        device_id = call.data["device_id"]
+        device_registry = dr.async_get(hass)
+        device = device_registry.async_get(device_id)
 
-        await coordinator.boost_room(
-            room_id=call.data["room_id"],
-            boost_level=call.data["boost_level"],
-            boost_timeout=call.data["boost_timeout"],
-        )
+        if device:
+            room_id: int = next(iter(device.identifiers))[2]
+            await coordinator.start_room_boost(
+                room_id=room_id,
+                boost_level=call.data["boost_level"],
+                boost_timeout=call.data["boost_timeout"] * 60,
+            )
 
-    hass.services.async_register(
-        DOMAIN, SERVICE_BOOST_ROOM, boost_room, schema=SERVICE_BOOST_ROOM_SCHEMA
-    )
+    async def stop_room_boost(call: ServiceCall) -> None:
+        """Service call to stop boosting fans in a room."""
+        device_id = call.data["device_id"]
+        device_registry = dr.async_get(hass)
+        device = device_registry.async_get(device_id)
+
+        if device:
+            room_id: int = next(iter(device.identifiers))[2]
+            await coordinator.stop_room_boost(room_id=room_id)
+
+    hass.services.async_register(DOMAIN, SERVICE_START_ROOM_BOOST, start_room_boost)
+    hass.services.async_register(DOMAIN, SERVICE_STOP_ROOM_BOOST, stop_room_boost)
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
 
