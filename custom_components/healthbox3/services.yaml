@@ -1,0 +1,19 @@
+boost_room:
+  name: Boost Room
+  description: Boost the fans in a specific room.
+  fields:
+    room_id:
+      name: Room ID
+      description: ID of the room
+      example: "1"
+      required: true
+    boost_level:
+      name: Level
+      description: The boost %. Default is 100%
+      example: 100
+      required: true
+    boost_timeout:
+      name: Timeout
+      description: Duration of the boost in seconds
+      example: 500
+      required: true

@@ -4,8 +4,8 @@ from __future__ import annotations
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
 
 from .const import DOMAIN
-from .coordinator import BlueprintDataUpdateCoordinator
-from .entity import IntegrationBlueprintEntity
+from .coordinator import Healthbox3DataUpdateCoordinator
+from .entity import Healthbox3Entity
 
 ENTITY_DESCRIPTIONS = (
     SwitchEntityDescription(
@@ -28,12 +28,12 @@ async def async_setup_entry(hass, entry, async_add_devices):
     )
 
 
-class IntegrationBlueprintSwitch(IntegrationBlueprintEntity, SwitchEntity):
+class IntegrationBlueprintSwitch(Healthbox3Entity, SwitchEntity):
     """healthbox3 switch class."""
 
     def __init__(
         self,
-        coordinator: BlueprintDataUpdateCoordinator,
+        coordinator: Healthbox3DataUpdateCoordinator,
         entity_description: SwitchEntityDescription,
     ) -> None:
         """Initialize the switch class."""

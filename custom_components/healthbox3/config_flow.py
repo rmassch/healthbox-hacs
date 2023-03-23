@@ -31,7 +31,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             try:
                 await self._test_credentials(
                     ipaddress=user_input[CONF_IP_ADDRESS],
-                    apikey=user_input[CONF_IP_ADDRESS],
+                    apikey=user_input[CONF_API_KEY],
                 )
             except Healthbox3ApiClientAuthenticationError as exception:
                 LOGGER.warning(exception)

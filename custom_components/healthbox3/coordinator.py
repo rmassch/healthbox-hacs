@@ -4,11 +4,14 @@ from __future__ import annotations
 from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_IP_ADDRESS, CONF_API_KEY
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed,
 )
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .api import (
@@ -16,33 +19,64 @@ from .api import (
     Healthbox3ApiClientAuthenticationError,
     Healthbox3ApiClientError,
 )
-from .const import DOMAIN, LOGGER
+from .const import (
+    DOMAIN,
+    LOGGER,
+    Healthbox3DataObject,
+    Healthbox3RoomBoost,
+)
 
 
 # https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
-class BlueprintDataUpdateCoordinator(DataUpdateCoordinator):
+class Healthbox3DataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the API."""
 
     config_entry: ConfigEntry
 
-    def __init__(
-        self,
-        hass: HomeAssistant,
-        client: Healthbox3ApiClient,
-    ) -> None:
+    api: Healthbox3ApiClient
+    entry: ConfigEntry
+
+    data: Healthbox3DataObject
+
+    def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         """Initialize."""
-        self.client = client
+
         super().__init__(
             hass=hass,
             logger=LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(minutes=5),
+            update_interval=timedelta(seconds=5),
+        )
+
+        self.entry = entry
+
+        self.api = Healthbox3ApiClient(
+            ipaddress=entry.data[CONF_IP_ADDRESS],
+            apikey=entry.data[CONF_API_KEY],
+            session=async_get_clientsession(hass),
+        )
+
+    async def boost_room(self, room_id: int, boost_level: int, boost_timeout: int):
+        """Boost HB3 Room"""
+        await self.api.async_boost_room(
+            room_id=room_id, boost_level=boost_level, boost_timeout=boost_timeout
         )
 
     async def _async_update_data(self):
         """Update data via library."""
         try:
-            return await self.client.async_get_data()
+            data = await self.api.async_get_data()
+
+            hb3_data: Healthbox3DataObject = Healthbox3DataObject(data=data)
+            for room in hb3_data.rooms:
+                boost_data = await self.api.async_get_room_boost_data(room.room_id)
+
+                room.boost = Healthbox3RoomBoost(
+                    boost_data["level"], boost_data["enable"], boost_data["remaining"]
+                )
+
+            return hb3_data
+
         except Healthbox3ApiClientAuthenticationError as exception:
             raise ConfigEntryAuthFailed(exception) from exception
         except Healthbox3ApiClientError as exception:

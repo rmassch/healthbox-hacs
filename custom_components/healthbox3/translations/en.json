@@ -4,8 +4,8 @@
             "user": {
                 "description": "If you need help with the configuration have a look here: https://github.com/rmassch/healthbox3",
                 "data": {
-                    "ipaddress": "IP Address",
-                    "apikey": "API Key"
+                    "ip_address": "IP Address",
+                    "api_key": "API Key"
                 }
             }
         },

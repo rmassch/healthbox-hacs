@@ -8,8 +8,8 @@ from homeassistant.components.binary_sensor import (
 )
 
 from .const import DOMAIN
-from .coordinator import BlueprintDataUpdateCoordinator
-from .entity import IntegrationBlueprintEntity
+from .coordinator import Healthbox3DataUpdateCoordinator
+from .entity import Healthbox3Entity
 
 ENTITY_DESCRIPTIONS = (
     BinarySensorEntityDescription(
@@ -32,12 +32,12 @@ async def async_setup_entry(hass, entry, async_add_devices):
     )
 
 
-class IntegrationBlueprintBinarySensor(IntegrationBlueprintEntity, BinarySensorEntity):
+class IntegrationBlueprintBinarySensor(Healthbox3Entity, BinarySensorEntity):
     """healthbox3 binary_sensor class."""
 
     def __init__(
         self,
-        coordinator: BlueprintDataUpdateCoordinator,
+        coordinator: Healthbox3DataUpdateCoordinator,
         entity_description: BinarySensorEntityDescription,
     ) -> None:
         """Initialize the binary_sensor class."""
