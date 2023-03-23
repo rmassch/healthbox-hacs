@@ -129,7 +129,7 @@ async def async_setup_entry(
 
 
 class Healthbox3SensorEntity(Healthbox3Entity, SensorEntity):
-    """Representation of a Healthbox 3 Room Sensor"""
+    """Representation of a Healthbox 3 Room Sensor."""
 
     entity_description: Healthbox3SensorEntityDescription
     coordinator: Healthbox3DataUpdateCoordinator
@@ -140,7 +140,7 @@ class Healthbox3SensorEntity(Healthbox3Entity, SensorEntity):
         entry: ConfigEntry,
         description: Healthbox3SensorEntityDescription,
     ) -> None:
-        """Initialize Sensor Domain"""
+        """Initialize Sensor Domain."""
         super().__init__(coordinator)
         self.entity_description = description
         self.entry = entry
@@ -148,6 +148,7 @@ class Healthbox3SensorEntity(Healthbox3Entity, SensorEntity):
 
     @property
     def native_value(self) -> float | int | str | Decimal:
+        """Sensor native value."""
         return self.entity_description.value_fn(
             self.coordinator.data.rooms[int(self.entity_description.room_id) - 1]
         )

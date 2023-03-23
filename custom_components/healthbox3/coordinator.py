@@ -57,7 +57,7 @@ class Healthbox3DataUpdateCoordinator(DataUpdateCoordinator):
         )
 
     async def boost_room(self, room_id: int, boost_level: int, boost_timeout: int):
-        """Boost HB3 Room"""
+        """Boost HB3 Room."""
         await self.api.async_boost_room(
             room_id=room_id, boost_level=boost_level, boost_timeout=boost_timeout
         )

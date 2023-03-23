@@ -7,12 +7,10 @@ from __future__ import annotations
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_IP_ADDRESS, CONF_API_KEY, Platform
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .api import Healthbox3ApiClient
 from .const import DOMAIN, SERVICE_BOOST_ROOM
 from .coordinator import Healthbox3DataUpdateCoordinator
 

@@ -48,7 +48,7 @@ class Healthbox3ApiClient:
     async def async_boost_room(
         self, room_id: int, boost_level: int, boost_timeout: int
     ) -> any:
-        """Boost HB3 Room"""
+        """Boost HB3 Room."""
         data = {"enable": True, "level": boost_level, "timeout": boost_timeout}
         await self._api_wrapper(
             method="put",
