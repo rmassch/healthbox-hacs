@@ -1,47 +1,108 @@
-# Notice
+# Healthbox 3 Integration for Home Assistant
 
-The component and platforms in this repository are not meant to be used by a
-user, but as a "blueprint" that custom component developers can build
-upon, to make more awesome stuff.
+[![GitHub Release][releases-shield]][releases]
+[![GitHub Activity][commits-shield]][commits]
+[![License][license-shield]](LICENSE)
 
-HAVE FUN! 😎
+[![hacs][hacsbadge]][hacs]
+![Project Maintenance][maintenance-shield]
 
-## Why?
+[![Community Forum][forum-shield]][forum]
 
-This is simple, by having custom_components look (README + structure) the same
-it is easier for developers to help each other and for users to start using them.
+_Integration to integrate with [healthbox3][healthbox3]._
 
-If you are a developer and you want to add things to this "blueprint" that you think more
-developers will have use for, please open a PR to add it :)
+[![Renson][rensonimg]][resonurl]
 
-## What?
+## Installation
 
-This repository contains multiple files, here is a overview:
+### HACS
+#### If published
 
-File | Purpose | Documentation
--- | -- | --
-`.devcontainer.json` | Used for development/testing with Visual Studio Code. | [Documentation](https://code.visualstudio.com/docs/remote/containers)
-`.github/ISSUE_TEMPLATE/*.yml` | Templates for the issue tracker | [Documentation](https://help.github.com/en/github/building-a-strong-community/configuring-issue-templates-for-your-repository)
-`.vscode/tasks.json` | Tasks for the devcontainer. | [Documentation](https://code.visualstudio.com/docs/editor/tasks)
-`custom_components/healthbox3/*` | Integration files, this is where everything happens. | [Documentation](https://developers.home-assistant.io/docs/creating_component_index)
-`CONTRIBUTING.md` | Guidelines on how to contribute. | [Documentation](https://help.github.com/en/github/building-a-strong-community/setting-guidelines-for-repository-contributors)
-`LICENSE` | The license file for the project. | [Documentation](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/licensing-a-repository)
-`README.md` | The file you are reading now, should contain info about the integration, installation and configuration instructions. | [Documentation](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax)
-`requirements.txt` | Python packages used for development/lint/testing this integration. | [Documentation](https://pip.pypa.io/en/stable/user_guide/#requirements-files)
+1. Launch HACS
+1. Navigate to the Integrations section
+1. "+ Explore & Add Repositories" button in the bottom-right
+1. Search for "Healthbox 3"
+1. Select "Install this repository"
+1. Restart Home Assistant
 
-## How?
+#### HACS (Manual)
 
-1. Create a new repository in GitHub, using this repository as a template by clicking the "Use this template" button in the GitHub UI.
-1. Open your new repository in Visual Studio Code devcontainer (Preferably with the "`Dev Containers: Clone Repository in Named Container Volume...`" option).
-1. Rename all instances of the `healthbox3` to `custom_components/<your_integration_domain>` (e.g. `custom_components/awesome_integration`).
-1. Rename all instances of the `Integration Blueprint` to `<Your Integration Name>` (e.g. `Awesome Integration`).
-1. Run the `scrtipts/develop` to start HA and test out your new integration.
+1. Launch HACS
+1. Navigate to the Integrations section
+1. Click the three dots at the top right
+1. Custom Repositories
+1. Enter the Repository URL: [healthbox3]
+1. Add
+1. Restart Home Assistant
 
-## Next steps
+### Home Assistant
 
-These are some next steps you may want to look into:
-- Add tests to your integration, [`pytest-homeassistant-custom-component`](https://github.com/MatthewFlamm/pytest-homeassistant-custom-component) can help you get started.
-- Add brand images (logo/icon) to https://github.com/home-assistant/brands.
-- Create your first release.
-- Share your integration on the [Home Assistant Forum](https://community.home-assistant.io/).
-- Submit your integration to the [HACS](https://hacs.xyz/docs/publish/start).
+1. Go to the integrations page
+1. Click on the "Add Integration" button at the bottom-right
+1. Search for the "Healthbox 3" integration
+1. Select the Healthbox 3 integration
+
+
+## Configuration
+
+### Options
+
+This integration can only be configured through the UI, and the options below can be configured when the integration is added.
+
+| key       | default        | required | description                                     |
+| --------- | -------------- | -------- | ----------------------------------------------- |
+| host      | none      | yes      | The IP of the Healthbox 3 device               |
+| api_key      | none           | no      | The API key if you want advanced API features and sensors enabled   |
+
+### API Key
+The API key can be requested through the Renson support. They will give you the key if you send an e-mail to  service@renson.be
+and mention your device serial number.
+
+## Sensors
+By default:
+* Global Air Quality Index
+* Serial/Warranty Number
+* Firmware
+* Boost Level per room
+
+If the API key is provided this integration will enabled the advanced API features which will expose the following sensors per room:
+* Temperature
+* Humidity
+* Air Quality Index
+* CO2 Concentration
+
+## Services
+### Start Room Boost
+| parameter       | type        | required | description                                     |
+| --------- | -------------- | -------- | ----------------------------------------------- |
+| device_id      | str      | yes      | The Healthbox 3 Room Device               |
+| boost_level    | int           | yes      | The level you want to boost to. Between 100% and 200%  |
+| boost_timeout    | int           | yes      | The boost duration in minutes  |
+
+### Stop Room Boost
+| parameter       | type        | required | description                                     |
+| --------- | -------------- | -------- | ----------------------------------------------- |
+| device_id      | str      | yes      | The Healthbox 3 Room Device               |
+
+
+<!-- ## Contributions are welcome!
+
+If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md) -->
+
+<!-- *** -->
+
+[healthbox3]: https://github.com/rmassch/healthbox3
+[buymecoffee]: https://www.buymeacoffee.com/ludeeus
+[buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
+[commits-shield]: https://img.shields.io/github/commit-activity/y/rmassch/healthbox3.svg?style=for-the-badge
+[commits]: https://github.com/rmassch/healthbox3/commits/main
+[hacs]: https://github.com/hacs/integration
+[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[rensonimg]: https://www.renson.eu/Renson/media/Renson-images/renson-logo.png?ext=.png
+[resonurl]: https://www.renson.eu/gd-gb/producten-zoeken/ventilatie/mechanische-ventilatie/units/healthbox-3-0
+[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
+[forum]: https://community.home-assistant.io/
+[license-shield]: https://img.shields.io/github/license/rmassch/healthbox3.svg?style=for-the-badge
+[maintenance-shield]: https://img.shields.io/badge/maintainer-@rmassch-blue.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/release/rmassch/healthbox3.svg?style=for-the-badge
+[releases]: https://github.com/rmassch/healthbox3/releases
