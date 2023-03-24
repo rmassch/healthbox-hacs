@@ -29,10 +29,13 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         _errors = {}
         if user_input is not None:
             try:
-                await self._test_credentials(
-                    ipaddress=user_input[CONF_IP_ADDRESS],
-                    apikey=user_input[CONF_API_KEY],
-                )
+                if CONF_API_KEY in user_input:
+                    await self._test_credentials(
+                        ipaddress=user_input[CONF_IP_ADDRESS],
+                        apikey=user_input[CONF_API_KEY],
+                    )
+                else:
+                    await self._test_connectivity(ipaddress=user_input[CONF_IP_ADDRESS])
             except Healthbox3ApiClientAuthenticationError as exception:
                 LOGGER.warning(exception)
                 _errors["base"] = "auth"
@@ -60,7 +63,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                             type=selector.TextSelectorType.TEXT
                         ),
                     ),
-                    vol.Required(CONF_API_KEY): selector.TextSelector(
+                    vol.Optional(CONF_API_KEY): selector.TextSelector(
                         selector.TextSelectorConfig(
                             type=selector.TextSelectorType.PASSWORD
                         ),
@@ -78,3 +81,12 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             session=async_create_clientsession(self.hass),
         )
         await client.async_enable_advanced_api_features()
+
+    async def _test_connectivity(self, ipaddress: str) -> None:
+        """Validate connectivity."""
+        client = Healthbox3ApiClient(
+            ipaddress=ipaddress,
+            apikey=None,
+            session=async_create_clientsession(self.hass),
+        )
+        await client.async_validate_connectivity()
