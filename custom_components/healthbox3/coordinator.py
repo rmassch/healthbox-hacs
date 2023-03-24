@@ -50,9 +50,13 @@ class Healthbox3DataUpdateCoordinator(DataUpdateCoordinator):
 
         self.entry = entry
 
+        api_key = None
+        if CONF_API_KEY in entry.data:
+            api_key = entry.data[CONF_API_KEY]
+
         self.api = Healthbox3ApiClient(
             ipaddress=entry.data[CONF_IP_ADDRESS],
-            apikey=entry.data[CONF_API_KEY],
+            apikey=api_key,
             session=async_get_clientsession(hass),
         )
 

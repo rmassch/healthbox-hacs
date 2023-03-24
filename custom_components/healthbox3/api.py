@@ -23,22 +23,20 @@ class Healthbox3ApiClientAuthenticationError(Healthbox3ApiClientError):
 class Healthbox3ApiClient:
     """Sample API Client."""
 
+    advanced_api: bool = False
+
     def __init__(
-        self,
-        ipaddress: str,
-        apikey: str,
-        session: aiohttp.ClientSession,
+        self, ipaddress: str, apikey: str | None, session: aiohttp.ClientSession
     ) -> None:
         """Sample API Client."""
         self._ipaddress = ipaddress
-        self._apikey = apikey
+        if apikey:
+            self._apikey = apikey
+            self.advanced_api = True
         self._session = session
 
     async def async_get_data(self) -> any:
         """Get data from the API."""
-        # return await self._api_wrapper(
-        #     method="get", url="https://jsonplaceholder.typicode.com/posts/1"
-        # )
         general_data = await self._api_wrapper(
             method="get", url=f"http://{self._ipaddress}/v2/api/data/current"
         )
@@ -74,15 +72,23 @@ class Healthbox3ApiClient:
 
     async def async_enable_advanced_api_features(self):
         """Enable advanced API Features."""
+        if self._apikey:
+            await self._api_wrapper(
+                method="post",
+                url=f"http://{self._ipaddress}/v2/api/api_key",
+                data=f"{self._apikey}",
+                expect_json_error=True,
+            )
+            await asyncio.sleep(2)
+            await self._async_validate_advanced_api_features()
+        else:
+            raise Healthbox3ApiClientAuthenticationError
 
+    async def async_validate_connectivity(self):
+        """Validate API Connectivity."""
         await self._api_wrapper(
-            method="post",
-            url=f"http://{self._ipaddress}/v2/api/api_key",
-            data=f"{self._apikey}",
-            expect_json_error=True,
+            method="get", url=f"http://{self._ipaddress}/v2/api/data/current"
         )
-        await asyncio.sleep(2)
-        await self._async_validate_advanced_api_features()
 
     async def _async_validate_advanced_api_features(self):
         """Validate API Advanced Features."""
