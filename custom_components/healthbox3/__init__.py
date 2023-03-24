@@ -7,20 +7,12 @@ from __future__ import annotations
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 
-from .const import DOMAIN, SERVICE_START_ROOM_BOOST, SERVICE_STOP_ROOM_BOOST
+from .const import DOMAIN, SERVICE_START_ROOM_BOOST, SERVICE_STOP_ROOM_BOOST, PLATFORMS
 from .coordinator import Healthbox3DataUpdateCoordinator
-
-PLATFORMS: list[Platform] = [
-    Platform.SENSOR,
-]
-
-# Platform.BINARY_SENSOR,
-# Platform.SWITCH,
 
 
 SERVICE_BOOST_ROOM_SCHEMA = vol.Schema(
@@ -32,17 +24,13 @@ SERVICE_BOOST_ROOM_SCHEMA = vol.Schema(
 )
 
 
-# https://developers.home-assistant.io/docs/config_entries_index/#setting-up-an-entry
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up this integration using UI."""
-    hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = coordinator = Healthbox3DataUpdateCoordinator(
-        hass=hass, entry=entry
-    )
 
+    coordinator = Healthbox3DataUpdateCoordinator(hass=hass, entry=entry)
     await coordinator.async_config_entry_first_refresh()
 
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
 
     async def start_room_boost(call: ServiceCall) -> None:
         """Service call to start boosting fans in a room."""
@@ -71,7 +59,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.services.async_register(DOMAIN, SERVICE_START_ROOM_BOOST, start_room_boost)
     hass.services.async_register(DOMAIN, SERVICE_STOP_ROOM_BOOST, stop_room_boost)
 
-    entry.async_on_unload(entry.add_update_listener(async_reload_entry))
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    # entry.async_on_unload(entry.add_update_listener(async_reload_entry))
 
     return True
 

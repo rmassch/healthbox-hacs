@@ -3,6 +3,8 @@ from logging import Logger, getLogger
 from datetime import timedelta
 from decimal import Decimal
 
+from homeassistant.const import Platform
+
 LOGGER: Logger = getLogger(__package__)
 
 NAME = "Healthbox 3"
@@ -11,6 +13,8 @@ VERSION = "0.0.1"
 MANUFACTURER = "Renson"
 ATTRIBUTION = ""
 SCAN_INTERVAL = timedelta(seconds=5)
+
+PLATFORMS = [Platform.SENSOR]
 
 SERVICE_START_ROOM_BOOST = "start_room_boost"
 SERVICE_STOP_ROOM_BOOST = "stop_room_boost"
