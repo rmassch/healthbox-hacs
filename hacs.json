@@ -1,5 +1,5 @@
 {
-    "name": "Integration blueprint",
+    "name": "Healthbox 3",
     "render_readme": true,
-    "homeassistant": "2022.2.0"
+    "homeassistant": "2023.3.0"
 }
