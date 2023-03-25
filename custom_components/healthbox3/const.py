@@ -2,8 +2,10 @@
 from logging import Logger, getLogger
 from datetime import timedelta
 from decimal import Decimal
+import voluptuous as vol
 
 from homeassistant.const import Platform
+from homeassistant.helpers import config_validation as cv
 
 LOGGER: Logger = getLogger(__package__)
 
@@ -17,7 +19,20 @@ SCAN_INTERVAL = timedelta(seconds=5)
 PLATFORMS = [Platform.SENSOR]
 
 SERVICE_START_ROOM_BOOST = "start_room_boost"
+SERVICE_START_ROOM_BOOST_SCHEMA = vol.Schema(
+    {
+        vol.Required(cv.CONF_DEVICE_ID): cv.string,
+        vol.Required("boost_level"): vol.All(int, vol.Range(min=10, max=200)),
+        vol.Required("boost_timeout"): vol.All(int, vol.Range(min=5, max=240)),
+    }
+)
+
 SERVICE_STOP_ROOM_BOOST = "stop_room_boost"
+SERVICE_STOP_ROOM_BOOST_SCHEMA = vol.Schema(
+    {vol.Required("device_id"): cv.string},
+)
+
+ALL_SERVICES = [SERVICE_START_ROOM_BOOST, SERVICE_STOP_ROOM_BOOST]
 
 
 class Healthbox3RoomBoost:
@@ -47,6 +62,7 @@ class Healthbox3Room:
         self.name: str = room_data["name"]
         self.type: str = room_data["type"]
         self.sensors_data: list = room_data["sensor"]
+        self.room_type: str = room_data["type"]
 
     @property
     def indoor_temperature(self) -> Decimal:

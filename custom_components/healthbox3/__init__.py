@@ -4,24 +4,21 @@ For more details about this integration, please refer to
 https://github.com/rmassch/healthbox3
 """
 from __future__ import annotations
-import voluptuous as vol
 
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.core import HomeAssistant, ServiceCall
-from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 
-from .const import DOMAIN, SERVICE_START_ROOM_BOOST, SERVICE_STOP_ROOM_BOOST, PLATFORMS
-from .coordinator import Healthbox3DataUpdateCoordinator
-
-
-SERVICE_BOOST_ROOM_SCHEMA = vol.Schema(
-    {
-        vol.Required("device_id"): cv.ATTR_DEVICE_ID,
-        vol.Required("boost_level"): cv.positive_int,
-        vol.Required("boost_timeout"): cv.positive_int,
-    },
+from .const import (
+    DOMAIN,
+    SERVICE_START_ROOM_BOOST,
+    SERVICE_START_ROOM_BOOST_SCHEMA,
+    SERVICE_STOP_ROOM_BOOST,
+    SERVICE_STOP_ROOM_BOOST_SCHEMA,
+    PLATFORMS,
+    ALL_SERVICES,
 )
+from .coordinator import Healthbox3DataUpdateCoordinator
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -32,6 +29,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
 
+    # Define Services
     async def start_room_boost(call: ServiceCall) -> None:
         """Service call to start boosting fans in a room."""
         device_id = call.data["device_id"]
@@ -39,7 +37,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         device = device_registry.async_get(device_id)
 
         if device:
-            room_id: int = next(iter(device.identifiers))[2]
+            device_identifier = next(iter(device.identifiers))[1]
+            room_id: int = int(device_identifier.split("_")[-1])
             await coordinator.start_room_boost(
                 room_id=room_id,
                 boost_level=call.data["boost_level"],
@@ -53,15 +52,24 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         device = device_registry.async_get(device_id)
 
         if device:
-            room_id: int = next(iter(device.identifiers))[2]
+            device_identifier = next(iter(device.identifiers))[1]
+            room_id: int = int(device_identifier.split("_")[-1])
             await coordinator.stop_room_boost(room_id=room_id)
 
-    hass.services.async_register(DOMAIN, SERVICE_START_ROOM_BOOST, start_room_boost)
-    hass.services.async_register(DOMAIN, SERVICE_STOP_ROOM_BOOST, stop_room_boost)
+    # Register Services
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_START_ROOM_BOOST,
+        start_room_boost,
+        SERVICE_START_ROOM_BOOST_SCHEMA,
+    )
+    hass.services.async_register(
+        DOMAIN, SERVICE_STOP_ROOM_BOOST, stop_room_boost, SERVICE_STOP_ROOM_BOOST_SCHEMA
+    )
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
-    # entry.async_on_unload(entry.add_update_listener(async_reload_entry))
+    entry.async_on_unload(entry.add_update_listener(async_reload_entry))
 
     return True
 
@@ -69,6 +77,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Handle removal of an entry."""
     if unloaded := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
+        for service in ALL_SERVICES:
+            hass.services.async_remove(DOMAIN, service)
         hass.data[DOMAIN].pop(entry.entry_id)
     return unloaded
 
