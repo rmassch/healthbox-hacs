@@ -3,12 +3,13 @@ start_room_boost:
   description: Boost the fans in a specific room.
   fields:
     device_id:
-      name: Healthbox3 Room
-      description: Healthbox3 Room
+      name: Room
+      description: Room
       required: true
       selector:
         device:
           integration: healthbox3
+          model: Healthbox 3.0 Room
     boost_level:
       name: Level
       description: The boost %. Default is 100%
@@ -36,9 +37,10 @@ stop_room_boost:
   description: Stops Boosting the fans in a specific room.
   fields:
     device_id:
-      name: Healthbox3 Room
-      description: Healthbox3 Room
+      name: Room
+      description: Room
       required: true
       selector:
         device:
           integration: healthbox3
+          model: Healthbox 3.0 Room

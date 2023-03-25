@@ -1,8 +1,6 @@
 """DataUpdateCoordinator for healthbox3."""
 from __future__ import annotations
 
-from datetime import timedelta
-
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_IP_ADDRESS, CONF_API_KEY
 from homeassistant.core import HomeAssistant
@@ -22,6 +20,7 @@ from .api import (
 from .const import (
     DOMAIN,
     LOGGER,
+    SCAN_INTERVAL,
     Healthbox3DataObject,
     Healthbox3RoomBoost,
 )
@@ -45,7 +44,7 @@ class Healthbox3DataUpdateCoordinator(DataUpdateCoordinator):
             hass=hass,
             logger=LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(seconds=5),
+            update_interval=SCAN_INTERVAL,
         )
 
         self.entry = entry

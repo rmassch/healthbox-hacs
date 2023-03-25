@@ -57,36 +57,17 @@ class Healthbox3GlobalSensorEntityDescription(
     """Class describing Healthbox3 sensor entities."""
 
 
-ROOM_SENSORS: list[Healthbox3RoomSensorEntityDescription] = []
+HEALTHBOX3_ROOM_SENSORS: list[Healthbox3RoomSensorEntityDescription] = []
 HEALTHBOX3_GLOBAL_SENSORS: list[Healthbox3GlobalSensorEntityDescription] = []
 
 
-async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+async def generate_room_sensors_for_healthbox3(
+    coordinator: Healthbox3DataUpdateCoordinator,
 ):
-    """Set up the sensor platform."""
-    coordinator: Healthbox3DataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-
-    HEALTHBOX3_GLOBAL_SENSORS.append(
-        Healthbox3GlobalSensorEntityDescription(
-            key=f"{DOMAIN}_global_aqi",
-            name="Healthbox3 Global Air Quality Index",
-            native_unit_of_measurement=None,
-            icon="mdi:leaf",
-            device_class=SensorDeviceClass.AQI,
-            state_class=SensorStateClass.MEASUREMENT,
-            value_fn=lambda x: x.global_aqi,
-            suggested_display_precision=2,
-        ),
-    )
-    async_add_entities(
-        Healthbox3GlobalSensorEntity(coordinator, entry, description)
-        for description in HEALTHBOX3_GLOBAL_SENSORS
-    )
-
+    """Generate sensors for each room."""
     if coordinator.api.advanced_api:
         for room in coordinator.data.rooms:
-            ROOM_SENSORS.append(
+            HEALTHBOX3_ROOM_SENSORS.append(
                 Healthbox3RoomSensorEntityDescription(
                     key=f"{room.room_id}_temperature",
                     name=f"{room.name} Temperature",
@@ -99,7 +80,7 @@ async def async_setup_entry(
                     suggested_display_precision=2,
                 ),
             )
-            ROOM_SENSORS.append(
+            HEALTHBOX3_ROOM_SENSORS.append(
                 Healthbox3RoomSensorEntityDescription(
                     key=f"{room.room_id}_humidity",
                     name=f"{room.name} Humidity",
@@ -113,7 +94,7 @@ async def async_setup_entry(
                 ),
             )
             if room.indoor_co2_concentration is not None:
-                ROOM_SENSORS.append(
+                HEALTHBOX3_ROOM_SENSORS.append(
                     Healthbox3RoomSensorEntityDescription(
                         key=f"{room.room_id}_co2_concentration",
                         name=f"{room.name} CO2 Concentration",
@@ -127,7 +108,7 @@ async def async_setup_entry(
                     ),
                 )
             if room.indoor_aqi is not None:
-                ROOM_SENSORS.append(
+                HEALTHBOX3_ROOM_SENSORS.append(
                     Healthbox3RoomSensorEntityDescription(
                         key=f"{room.room_id}_aqi",
                         name=f"{room.name} Air Quality Index",
@@ -142,7 +123,7 @@ async def async_setup_entry(
                 )
     for room in coordinator.data.rooms:
         if room.boost is not None:
-            ROOM_SENSORS.append(
+            HEALTHBOX3_ROOM_SENSORS.append(
                 Healthbox3RoomSensorEntityDescription(
                     key=f"{room.room_id}_boost_level",
                     name=f"{room.name} Boost Level",
@@ -156,9 +137,40 @@ async def async_setup_entry(
                 ),
             )
 
+
+async def generate_global_sensors_for_healthbox3():
+    """Generate global sensors."""
+    HEALTHBOX3_GLOBAL_SENSORS.append(
+        Healthbox3GlobalSensorEntityDescription(
+            key=f"{DOMAIN}_global_aqi",
+            name="Healthbox3 Global Air Quality Index",
+            native_unit_of_measurement=None,
+            icon="mdi:leaf",
+            device_class=SensorDeviceClass.AQI,
+            state_class=SensorStateClass.MEASUREMENT,
+            value_fn=lambda x: x.global_aqi,
+            suggested_display_precision=2,
+        ),
+    )
+
+
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+):
+    """Set up the sensor platform."""
+    coordinator: Healthbox3DataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+
+    await generate_global_sensors_for_healthbox3()
+    await generate_room_sensors_for_healthbox3(coordinator)
+
+    async_add_entities(
+        Healthbox3GlobalSensorEntity(coordinator, entry, description)
+        for description in HEALTHBOX3_GLOBAL_SENSORS
+    )
+
     async_add_entities(
         Healthbox3RoomSensorEntity(coordinator, entry, description)
-        for description in ROOM_SENSORS
+        for description in HEALTHBOX3_ROOM_SENSORS
     )
 
 
@@ -166,7 +178,6 @@ class Healthbox3GlobalSensorEntity(Healthbox3Entity, SensorEntity):
     """Representation of a Healthbox 3 Room Sensor."""
 
     entity_description: Healthbox3GlobalSensorEntityDescription
-    coordinator: Healthbox3DataUpdateCoordinator
 
     def __init__(
         self,
@@ -190,7 +201,6 @@ class Healthbox3RoomSensorEntity(Healthbox3Entity, SensorEntity):
     """Representation of a Healthbox 3 Room Sensor."""
 
     entity_description: Healthbox3RoomSensorEntityDescription
-    coordinator: Healthbox3DataUpdateCoordinator
 
     def __init__(
         self,
@@ -209,7 +219,10 @@ class Healthbox3RoomSensorEntity(Healthbox3Entity, SensorEntity):
         """Return the device info."""
         return DeviceInfo(
             identifiers={
-                (DOMAIN, self.entry.entry_id, self.entity_description.room.room_id)
+                (
+                    DOMAIN,
+                    f"{self.entry.entry_id}_{self.entity_description.room.room_id}",
+                )
             },
             name=self.entity_description.room.name,
             manufacturer="Renson",
