@@ -16,7 +16,7 @@ start_room_boost:
       required: true
       selector:
         number:
-          min: 100
+          min: 10
           max: 200
           step: 5
           mode: slider
@@ -28,7 +28,7 @@ start_room_boost:
       selector:
         number:
           min: 5
-          max: 120
+          max: 240
           step: 1
           mode: slider
           unit_of_measurement: minutes
