@@ -155,6 +155,20 @@ def generate_room_sensors_for_healthbox(
                     suggested_display_precision=2,
                 ),
             )
+        if room.airflow_ventilation_rate is not None:
+            room_sensors.append(
+                HealthboxRoomSensorEntityDescription(
+                    key=f"{room.room_id}_airflow_ventilation_rate",
+                    name=f"{room.name} Airflow Ventilation Rate",
+                    native_unit_of_measurement=PERCENTAGE,
+                    icon="mdi:fan",
+                    # device_class=SensorDeviceClass.,
+                    state_class=SensorStateClass.MEASUREMENT,
+                    room=room,
+                    value_fn=lambda x: x.airflow_ventilation_rate * 100,
+                    suggested_display_precision=2,
+                ),
+            )
     return room_sensors
 
 
