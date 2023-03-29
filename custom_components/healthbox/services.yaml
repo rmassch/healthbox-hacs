@@ -8,8 +8,8 @@ start_room_boost:
       required: true
       selector:
         device:
-          integration: healthbox3
-          model: Healthbox 3.0 Room
+          integration: healthbox
+          model: Healthbox Room
     boost_level:
       name: Level
       description: The boost %. Default is 100%
@@ -42,5 +42,5 @@ stop_room_boost:
       required: true
       selector:
         device:
-          integration: healthbox3
-          model: Healthbox 3.0 Room
+          integration: healthbox
+          model: Healthbox Room

@@ -1,16 +1,17 @@
-"""Constants for healthbox3."""
+"""Constants for the Renson Healthbox integration."""
+import voluptuous as vol
+
 from logging import Logger, getLogger
 from datetime import timedelta
 from decimal import Decimal
-import voluptuous as vol
 
 from homeassistant.const import Platform
 from homeassistant.helpers import config_validation as cv
 
 LOGGER: Logger = getLogger(__package__)
 
-NAME = "Healthbox 3"
-DOMAIN = "healthbox3"
+NAME = "Healthbox "
+DOMAIN = "healthbox"
 VERSION = "0.0.1"
 MANUFACTURER = "Renson"
 ATTRIBUTION = ""
@@ -35,8 +36,8 @@ SERVICE_STOP_ROOM_BOOST_SCHEMA = vol.Schema(
 ALL_SERVICES = [SERVICE_START_ROOM_BOOST, SERVICE_STOP_ROOM_BOOST]
 
 
-class Healthbox3RoomBoost:
-    """Healthbox 3 Room Boost object."""
+class HealthboxRoomBoost:
+    """Healthbox  Room Boost object."""
 
     level: float
     enabled: bool
@@ -45,19 +46,19 @@ class Healthbox3RoomBoost:
     def __init__(
         self, level: float = 100, enabled: bool = False, remaining: int = 900
     ) -> None:
-        """Initialize the HB3 Room Boost."""
+        """Initialize the HB Room Boost."""
         self.level = level
         self.enabled = enabled
         self.remaining = remaining
 
 
-class Healthbox3Room:
-    """Healthbox 3 Room object."""
+class HealthboxRoom:
+    """Healthbox  Room object."""
 
-    boost: Healthbox3RoomBoost = None
+    boost: HealthboxRoomBoost = None
 
     def __init__(self, room_id: int, room_data: object) -> None:
-        """Initialize the HB3 Room."""
+        """Initialize the HB Room."""
         self.room_id: int = room_id
         self.name: str = room_data["name"]
         self.type: str = room_data["type"]
@@ -66,7 +67,7 @@ class Healthbox3Room:
 
     @property
     def indoor_temperature(self) -> Decimal:
-        """HB3 Indoor Temperature."""
+        """HB Indoor Temperature."""
         return [
             sensor["parameter"]["temperature"]["value"]
             for sensor in self.sensors_data
@@ -75,7 +76,7 @@ class Healthbox3Room:
 
     @property
     def indoor_humidity(self) -> Decimal:
-        """HB3 Indoor Humidity."""
+        """HB Indoor Humidity."""
         return [
             sensor["parameter"]["humidity"]["value"]
             for sensor in self.sensors_data
@@ -84,7 +85,7 @@ class Healthbox3Room:
 
     @property
     def indoor_co2_concentration(self) -> Decimal | None:
-        """HB3 Indoor CO2 Concentration."""
+        """HB Indoor CO2 Concentration."""
         co2_concentration = None
         try:
             co2_concentration = [
@@ -98,7 +99,7 @@ class Healthbox3Room:
 
     @property
     def indoor_aqi(self) -> Decimal | None:
-        """HB3 Indoor Air Quality Index."""
+        """HB Indoor Air Quality Index."""
         aqi = None
         try:
             aqi = [
@@ -111,8 +112,8 @@ class Healthbox3Room:
         return aqi
 
 
-class Healthbox3DataObject:
-    """Healthbox3 Data Object."""
+class HealthboxDataObject:
+    """Healthbox Data Object."""
 
     serial: str
     description: str
@@ -120,7 +121,7 @@ class Healthbox3DataObject:
 
     global_aqi: float = None
 
-    rooms: list[Healthbox3Room]
+    rooms: list[HealthboxRoom]
 
     def __init__(self, data: any) -> None:
         """Initialize."""
@@ -130,12 +131,12 @@ class Healthbox3DataObject:
 
         self.global_aqi = self._get_global_aqi_from_data(data)
 
-        hb3_rooms: list[Healthbox3Room] = []
+        hb_rooms: list[HealthboxRoom] = []
         for room in data["room"]:
-            hb3_room = Healthbox3Room(room, data["room"][room])
-            hb3_rooms.append(hb3_room)
+            hb_room = HealthboxRoom(room, data["room"][room])
+            hb_rooms.append(hb_room)
 
-        self.rooms = hb3_rooms
+        self.rooms = hb_rooms
 
     def _get_global_aqi_from_data(self, data: any) -> float | None:
         """Set Global AQI from Data Object."""
