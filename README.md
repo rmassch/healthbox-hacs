@@ -13,17 +13,24 @@ _Integration to integrate with [healthbox][healthbox]._
 
 [![Renson][rensonimg]][resonurl]
 
+## DISCLAIMER
+This is still a work in progress. If time permits, I'll try to push this to HACS or Home Assistant Core.
+
+## Known Issues
+- Missing Branding
+
 ## Installation
 
 ### HACS
-#### If published
+
+<!-- #### If published
 
 1. Launch HACS
 1. Navigate to the Integrations section
 1. "+ Explore & Add Repositories" button in the bottom-right
 1. Search for "Renson Healthbox"
 1. Select "Install this repository"
-1. Restart Home Assistant
+1. Restart Home Assistant -->
 
 #### HACS (Manual)
 
@@ -31,16 +38,22 @@ _Integration to integrate with [healthbox][healthbox]._
 1. Navigate to the Integrations section
 1. Click the three dots at the top right
 1. Custom Repositories
-1. Enter the Repository URL: [healthbox]
-1. Add
+1. Enter the Repository URL: https://github.com/rmassch/healthbox-hacs
+1. Select Category -> Integration
+1. Click Add
+1. Close the modal
+1. The integration should show up as a new repository, if not, search "Renson Healthbox" in "Explore & Download Repositories"
+1. Click the integration & Download
 1. Restart Home Assistant
 
 ### Home Assistant
 
-1. Go to the integrations page
-1. Click on the "Add Integration" button at the bottom-right
+1. Go to Settings -> Devices & Services
+1. Click on the "+ Add Integration" button at the bottom-right
 1. Search for the "Renson Healthbox" integration
 1. Select the Renson Healthbox integration
+1. Enter the Host IP & API Key (if applicable)
+1. Submit
 
 
 ## Configuration
@@ -79,7 +92,7 @@ If the API key is provided this integration will enabled the advanced API featur
 | parameter       | type        | required | description                                     |
 | --------- | -------------- | -------- | ----------------------------------------------- |
 | device_id      | str      | yes      | The Healthbox 3 Room Device               |
-| boost_level    | int           | yes      | The level you want to boost to. Between 100% and 200%  |
+| boost_level    | int           | yes      | The level you want to boost to. Between 10% and 200%  |
 | boost_timeout    | int           | yes      | The boost duration in minutes  |
 
 ### Stop Room Boost
