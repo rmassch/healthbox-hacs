@@ -9,7 +9,7 @@
 
 [![Community Forum][forum-shield]][forum]
 
-_Integration to integrate with [healthbox3][healthbox3]._
+_Integration to integrate with [healthbox][healthbox]._
 
 [![Renson][rensonimg]][resonurl]
 
@@ -21,7 +21,7 @@ _Integration to integrate with [healthbox3][healthbox3]._
 1. Launch HACS
 1. Navigate to the Integrations section
 1. "+ Explore & Add Repositories" button in the bottom-right
-1. Search for "Healthbox 3"
+1. Search for "Renson Healthbox"
 1. Select "Install this repository"
 1. Restart Home Assistant
 
@@ -31,7 +31,7 @@ _Integration to integrate with [healthbox3][healthbox3]._
 1. Navigate to the Integrations section
 1. Click the three dots at the top right
 1. Custom Repositories
-1. Enter the Repository URL: [healthbox3]
+1. Enter the Repository URL: [healthbox]
 1. Add
 1. Restart Home Assistant
 
@@ -39,8 +39,8 @@ _Integration to integrate with [healthbox3][healthbox3]._
 
 1. Go to the integrations page
 1. Click on the "Add Integration" button at the bottom-right
-1. Search for the "Healthbox 3" integration
-1. Select the Healthbox 3 integration
+1. Search for the "Renson Healthbox" integration
+1. Select the Renson Healthbox integration
 
 
 ## Configuration
@@ -91,7 +91,7 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 
 <!-- *** -->
 
-[healthbox3]: https://github.com/rmassch/healthbox-hacs
+[healthbox]: https://github.com/rmassch/healthbox-hacs
 [buymecoffee]: https://www.buymeacoffee.com/ludeeus
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
 [commits-shield]: https://img.shields.io/github/commit-activity/y/rmassch/healthbox-hacs.svg?style=for-the-badge
