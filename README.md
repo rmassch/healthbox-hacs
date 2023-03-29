@@ -65,11 +65,12 @@ By default:
 * Firmware
 * Boost Level per room
 
-If the API key is provided this integration will enabled the advanced API features which will expose the following sensors per room:
+If the API key is provided this integration will enabled the advanced API features which will expose the following sensors per room (if available):
 * Temperature
 * Humidity
 * Air Quality Index
 * CO2 Concentration
+* Volatile Organic Compounds
 
 ## Services
 ### Start Room Boost
