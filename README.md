@@ -61,8 +61,8 @@ and mention your device serial number.
 ## Sensors
 By default:
 * Global Air Quality Index
-* Serial/Warranty Number
-* Firmware
+* Serial Number
+* Warranty Number
 * Boost Level per room
 
 If the API key is provided this integration will enabled the advanced API features which will expose the following sensors per room (if available):
