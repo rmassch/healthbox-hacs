@@ -7,7 +7,10 @@ from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
+from pyhealthbox3.healthbox3 import Healthbox3
+
 from .const import (
+    ALL_SERVICES,
     DOMAIN,
     SERVICE_START_ROOM_BOOST,
     SERVICE_START_ROOM_BOOST_SCHEMA,
@@ -15,8 +18,6 @@ from .const import (
     SERVICE_STOP_ROOM_BOOST_SCHEMA,
     PLATFORMS,
 )
-
-from pyhealthbox3.healthbox3 import Healthbox3
 
 from .coordinator import HealthboxDataUpdateCoordinator
 
@@ -90,6 +91,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data[DOMAIN].pop(entry.entry_id)
         if not hass.data[DOMAIN]:
             del hass.data[DOMAIN]
+
+        for service in ALL_SERVICES:
+            hass.services.async_remove(DOMAIN, service)
 
     return unload_ok
 
