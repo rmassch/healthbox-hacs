@@ -58,6 +58,8 @@ This integration can only be configured through the UI, and the options below ca
 The API key can be requested through the Renson support. They will give you the key if you send an e-mail to  service@renson.be
 and mention your device serial number.
 
+(See: https://community.home-assistant.io/t/renson-healthbox-3-0/52983/57)
+
 ## Sensors
 By default:
 * Global Air Quality Index
