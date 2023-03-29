@@ -1,5 +1,6 @@
 {
-    "name": "Healthbox 3",
+    "name": "Healthbox",
     "render_readme": true,
     "homeassistant": "2023.3.0"
 }
+

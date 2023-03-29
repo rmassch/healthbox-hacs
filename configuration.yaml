@@ -5,4 +5,5 @@ default_config:
 logger:
   default: info
   logs:
-    custom_components.healthbox3: debug
+    custom_components.healthbox: debug
+
