@@ -80,6 +80,7 @@ By default:
 * Warranty Number
 * Boost Level per room
 * Airflow Ventilation Rate
+* Profile
 
 If the API key is provided this integration will enabled the advanced API features which will expose the following sensors per room (if available):
 * Temperature
