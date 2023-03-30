@@ -169,6 +169,16 @@ def generate_room_sensors_for_healthbox(
                     suggested_display_precision=2,
                 ),
             )
+        if room.profile_name is not None:
+            room_sensors.append(
+                HealthboxRoomSensorEntityDescription(
+                    key=f"{room.room_id}_profile",
+                    name=f"{room.name} Profile",
+                    icon="mdi:account-box",
+                    room=room,
+                    value_fn=lambda x: x.profile_name,
+                ),
+            )
     return room_sensors
 
 
