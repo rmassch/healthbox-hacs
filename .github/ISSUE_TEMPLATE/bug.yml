@@ -26,7 +26,7 @@ body:
     label: API output
     description: Please provide the output from http://YOUR_HEALTHBOX_IP/v2/api/data/current
   validations:
-    required: true
+    required: false
 - type: textarea
   attributes:
     label: "Debug logs"
