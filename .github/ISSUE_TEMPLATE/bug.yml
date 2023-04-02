@@ -23,15 +23,10 @@ body:
     required: true
 - type: textarea
   attributes:
-    label: Reproduction steps
-    description: "If availlable"
-    value: |
-      1.
-      2.
-      3.
-      ...
+    label: API output
+    description: Please provide the output from http://YOUR_HEALTHBOX_IP/v2/api/data/current
   validations:
-    required: false
+    required: true
 - type: textarea
   attributes:
     label: "Debug logs"
