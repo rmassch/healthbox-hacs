@@ -1,7 +1,6 @@
 """Config flow for Renson Healthbox integration."""
 from __future__ import annotations
 
-import logging
 from typing import Any
 
 import voluptuous as vol
@@ -12,10 +11,10 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
+from homeassistant.core import callback
 
 from homeassistant.const import CONF_HOST, CONF_API_KEY
 
-from .const import DOMAIN, LOGGER
 from pyhealthbox3.healthbox3 import (
     Healthbox3,
     Healthbox3ApiClientAuthenticationError,
@@ -23,13 +22,21 @@ from pyhealthbox3.healthbox3 import (
     Healthbox3ApiClientError,
 )
 
-_LOGGER = logging.getLogger(__name__)
+from .const import DOMAIN, LOGGER
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Renson Healthbox."""
 
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> config_entries.OptionsFlow:
+        """Create the options flow."""
+        return OptionsFlowHandler(config_entry)
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -108,3 +115,38 @@ class CannotConnect(HomeAssistantError):
 
 class InvalidAuth(HomeAssistantError):
     """Error to indicate there is invalid auth."""
+
+
+class OptionsFlowHandler(config_entries.OptionsFlow):
+    """Options Flow for the Config Entry."""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.entry = config_entry
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Manage the options."""
+
+        host: str = self.entry.data[CONF_HOST] if CONF_HOST in self.entry.data else ""
+        api_key: str = (
+            self.entry.data[CONF_API_KEY] if CONF_API_KEY in self.entry.data else None
+        )
+
+        data_schema = {
+            vol.Required(CONF_API_KEY, default=api_key): selector.TextSelector(
+                selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
+            )
+        }
+
+        if user_input is not None:
+            hb3 = Healthbox3(host, user_input[CONF_API_KEY])
+            await hb3.async_validate_connectivity()
+            await hb3.close()
+            self.hass.config_entries.async_update_entry(
+                entry=self.entry,
+                data={CONF_HOST: host, CONF_API_KEY: user_input[CONF_API_KEY]},
+            )
+            return self.async_create_entry(title="", data=None)
+        return self.async_show_form(step_id="init", data_schema=vol.Schema(data_schema))

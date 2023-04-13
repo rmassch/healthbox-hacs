@@ -25,8 +25,12 @@ from .coordinator import HealthboxDataUpdateCoordinator
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Renson Healthbox from a config entry."""
     api_key = None
+
     if CONF_API_KEY in entry.data:
         api_key = entry.data[CONF_API_KEY]
+
+    # if CONF_API_KEY in entry.options:
+    #     api_key = entry.options[CONF_API_KEY]
 
     api: Healthbox3 = Healthbox3(
         host=entry.data[CONF_HOST],
@@ -80,8 +84,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         DOMAIN, SERVICE_STOP_ROOM_BOOST, stop_room_boost, SERVICE_STOP_ROOM_BOOST_SCHEMA
     )
 
-    # entry.async_on_unload(entry.add_update_listener(async_reload_entry))
-
+    entry.async_on_unload(entry.add_update_listener(async_update_options))
     return True
 
 
@@ -102,3 +105,8 @@ async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload config entry."""
     await async_unload_entry(hass, entry)
     await async_setup_entry(hass, entry)
+
+
+async def async_update_options(hass: HomeAssistant, entry: ConfigEntry):
+    """Reload entry if options change."""
+    await hass.config_entries.async_reload(entry.entry_id)

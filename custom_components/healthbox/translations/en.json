@@ -10,9 +10,18 @@
             }
         },
         "error": {
-            "auth": "IP/API Key is wrong.",
+            "auth": "API Key is wrong.",
             "connection": "Unable to connect to the Healthbox 3 Unit.",
             "unknown": "Unknown error occurred."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "data": {
+                    "api_key": "API Key"
+                }
+            }
         }
     }
 }
