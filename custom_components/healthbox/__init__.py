@@ -33,8 +33,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         api_key=api_key,
         session=async_get_clientsession(hass),
     )
-    if api_key:
-        await api.async_enable_advanced_api_features()
 
     coordinator = HealthboxDataUpdateCoordinator(hass=hass, entry=entry, api=api)
     await coordinator.async_config_entry_first_refresh()
