@@ -182,9 +182,9 @@ def generate_room_sensors_for_healthbox(
     return room_sensors
 
 
-def generate_global_sensors_for_healthbox() -> (
-    list[HealthboxGlobalSensorEntityDescription]
-):
+def generate_global_sensors_for_healthbox(
+    coordinator: HealthboxDataUpdateCoordinator,
+) -> list[HealthboxGlobalSensorEntityDescription]:
     """Generate global sensors."""
     global_sensors: list[HealthboxGlobalSensorEntityDescription] = []
     global_sensors.append(
@@ -197,8 +197,48 @@ def generate_global_sensors_for_healthbox() -> (
             state_class=SensorStateClass.MEASUREMENT,
             value_fn=lambda x: x.global_aqi,
             suggested_display_precision=2,
-        ),
+        )
     )
+    global_sensors.append(
+        HealthboxGlobalSensorEntityDescription(
+            key="error_count",
+            name="Error Count",
+            native_unit_of_measurement=None,
+            icon="mdi:alert-outline",
+            state_class=SensorStateClass.MEASUREMENT,
+            value_fn=lambda x: x.error_count,
+            suggested_display_precision=0,
+        )
+    )
+    if coordinator.api.wifi.status:
+        global_sensors.append(
+            HealthboxGlobalSensorEntityDescription(
+                key="wifi_status",
+                name="WiFi Status",
+                icon="mdi:wifi",
+                value_fn=lambda x: x.wifi.status,
+            )
+        )
+    if coordinator.api.wifi.internet_connection is not None:
+        global_sensors.append(
+            HealthboxGlobalSensorEntityDescription(
+                key="wifi_internet_connection",
+                name="WiFi Internet Connection",
+                native_unit_of_measurement=None,
+                icon="mdi:web",
+                state_class=SensorStateClass.MEASUREMENT,
+                value_fn=lambda x: x.wifi.internet_connection,
+            )
+        )
+    if coordinator.api.wifi.ssid:
+        global_sensors.append(
+            HealthboxGlobalSensorEntityDescription(
+                key="wifi_ssid",
+                name="WiFi SSID",
+                icon="mdi:wifi-settings",
+                value_fn=lambda x: x.wifi.ssid,
+            )
+        )
     return global_sensors
 
 
@@ -212,7 +252,7 @@ async def async_setup_entry(
         config_entry.entry_id
     ]
 
-    global_sensors = generate_global_sensors_for_healthbox()
+    global_sensors = generate_global_sensors_for_healthbox(coordinator=coordinator)
     room_sensors = generate_room_sensors_for_healthbox(coordinator=coordinator)
     entities = []
 
@@ -248,6 +288,7 @@ class HealthboxGlobalSensor(
             manufacturer=MANUFACTURER,
             model=coordinator.api.description,
             hw_version=coordinator.api.warranty_number,
+            sw_version=coordinator.api.firmware_version,
         )
 
     @property
