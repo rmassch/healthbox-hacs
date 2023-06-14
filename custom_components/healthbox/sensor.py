@@ -26,7 +26,7 @@ from homeassistant.components.sensor import (
 )
 
 
-from .const import DOMAIN, MANUFACTURER, HealthboxRoom
+from .const import DOMAIN, MANUFACTURER, HealthboxRoom, LOGGER
 from .coordinator import HealthboxDataUpdateCoordinator
 
 
@@ -330,6 +330,17 @@ class HealthboxRoomSensor(
     @property
     def native_value(self) -> float | int | str | Decimal:
         """Sensor native value."""
-        return self.entity_description.value_fn(
-            self.coordinator.api.rooms[int(self.entity_description.room.room_id) - 1]
-        )
+        room_id: int = int(self.entity_description.room.room_id)
+
+        matching_room = [
+            room for room in self.coordinator.api.rooms if int(room.room_id) == room_id
+        ]
+
+        if len(matching_room) != 1:
+            error_msg: str = f"No matching room found for id {room_id}"
+            LOGGER.error(error_msg)
+        else:
+            matching_room = matching_room[0]
+            return self.entity_description.value_fn(matching_room)
+
+        return None
