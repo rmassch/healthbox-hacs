@@ -14,7 +14,6 @@ from homeassistant.const import (
     UnitOfTemperature,
     PERCENTAGE,
     CONCENTRATION_PARTS_PER_MILLION,
-    CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
 )
 
 
@@ -125,17 +124,17 @@ def generate_room_sensors_for_healthbox(
                         ),
                     )
             if "indoor volatile organic compounds" in room.enabled_sensors:
-                if room.indoor_voc_microg_per_cubic is not None:
+                if room.indoor_voc_ppm is not None:
                     room_sensors.append(
                         HealthboxRoomSensorEntityDescription(
                             key=f"{room.room_id}_voc",
                             name=f"{room.name} Volatile Organic Compounds",
-                            native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+                            native_unit_of_measurement=CONCENTRATION_PARTS_PER_MILLION,
                             icon="mdi:leaf",
-                            device_class=SensorDeviceClass.VOLATILE_ORGANIC_COMPOUNDS,
+                            device_class=SensorDeviceClass.VOLATILE_ORGANIC_COMPOUNDS_PARTS,
                             state_class=SensorStateClass.MEASUREMENT,
                             room=room,
-                            value_fn=lambda x: x.indoor_voc_microg_per_cubic,
+                            value_fn=lambda x: x.indoor_voc_ppm,
                             suggested_display_precision=2,
                         ),
                     )
