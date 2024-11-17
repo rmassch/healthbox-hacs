@@ -14,6 +14,11 @@ from homeassistant.const import (
     UnitOfTemperature,
     PERCENTAGE,
     CONCENTRATION_PARTS_PER_MILLION,
+    ATTR_VOLTAGE,
+    REVOLUTIONS_PER_MINUTE,
+    UnitOfPower,
+    UnitOfPressure,
+    UnitOfVolumeFlowRate,
 )
 
 
@@ -238,6 +243,72 @@ def generate_global_sensors_for_healthbox(
                 value_fn=lambda x: x.wifi.ssid,
             )
         )
+
+    if coordinator.api.fan.voltage is not None:
+        global_sensors.append(
+            HealthboxGlobalSensorEntityDescription(
+                key="fan_voltage",
+                name="Fan Voltage",
+                icon="mdi:sine-wave",
+                native_unit_of_measurement=ATTR_VOLTAGE,
+                device_class=SensorDeviceClass.VOLTAGE,
+                state_class=SensorStateClass.MEASUREMENT,
+                value_fn=lambda x: x.fan.voltage,
+                suggested_display_precision=2,
+            )
+        )
+    if coordinator.api.fan.pressure is not None:
+        global_sensors.append(
+            HealthboxGlobalSensorEntityDescription(
+                key="fan_pressure",
+                name="Fan Pressure",
+                icon="mdi:arrow-collapse-vertical",
+                native_unit_of_measurement=UnitOfPressure.PA,
+                device_class=SensorDeviceClass.PRESSURE,
+                state_class=SensorStateClass.MEASUREMENT,
+                value_fn=lambda x: x.fan.pressure,
+                suggested_display_precision=2,
+            )
+        )
+    if coordinator.api.fan.flow is not None:
+        global_sensors.append(
+            HealthboxGlobalSensorEntityDescription(
+                key="fan_flow",
+                name="Fan Flow",
+                icon="mdi:wind-power",
+                native_unit_of_measurement=UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR,
+                device_class=SensorDeviceClass.VOLUME_FLOW_RATE,
+                state_class=SensorStateClass.MEASUREMENT,
+                value_fn=lambda x: x.fan.flow,
+                suggested_display_precision=2,
+            )
+        )
+    if coordinator.api.fan.power is not None:
+        global_sensors.append(
+            HealthboxGlobalSensorEntityDescription(
+                key="fan_power",
+                name="Fan Power",
+                icon="mdi:flash",
+                native_unit_of_measurement=UnitOfPower.WATT,
+                device_class=SensorDeviceClass.POWER,
+                state_class=SensorStateClass.MEASUREMENT,
+                value_fn=lambda x: x.fan.power,
+                suggested_display_precision=2,
+            )
+        )
+    if coordinator.api.fan.rpm is not None:
+        global_sensors.append(
+            HealthboxGlobalSensorEntityDescription(
+                key="fan_rpm",
+                name="Fan RPM",
+                icon="mdi:fan",
+                native_unit_of_measurement=REVOLUTIONS_PER_MINUTE,
+                device_class=SensorDeviceClass.SPEED,
+                state_class=SensorStateClass.MEASUREMENT,
+                value_fn=lambda x: x.fan.rpm,
+            )
+        )
+
     return global_sensors
 
 
