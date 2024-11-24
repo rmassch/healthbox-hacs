@@ -19,7 +19,8 @@ from homeassistant.const import (
     UnitOfPower,
     UnitOfPressure,
     UnitOfVolumeFlowRate,
-    UnitOfElectricPotential
+    UnitOfElectricPotential,
+    UnitOfTime
 )
 
 
@@ -158,6 +159,17 @@ def generate_room_sensors_for_healthbox(
                     room=room,
                     value_fn=lambda x: x.boost.level,
                     suggested_display_precision=2,
+                ),
+            )
+            room_sensors.append(
+                HealthboxRoomSensorEntityDescription(
+                    key=f"{room.room_id}_boost_remaining",
+                    name=f"{room.name} Boost Remaining",
+                    native_unit_of_measurement=UnitOfTime.SECONDS,
+                    icon="mdi:clock-time-five-outline",
+                    state_class=SensorStateClass.MEASUREMENT,
+                    room=room,
+                    value_fn=lambda x: x.boost.remaining
                 ),
             )
         if room.airflow_ventilation_rate is not None:
