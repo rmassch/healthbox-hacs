@@ -10,15 +10,16 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
 from homeassistant.const import (
     UnitOfTemperature,
     PERCENTAGE,
     CONCENTRATION_PARTS_PER_MILLION,
-    ATTR_VOLTAGE,
     REVOLUTIONS_PER_MINUTE,
     UnitOfPower,
     UnitOfPressure,
     UnitOfVolumeFlowRate,
+    UnitOfElectricPotential
 )
 
 
@@ -250,7 +251,7 @@ def generate_global_sensors_for_healthbox(
                 key="fan_voltage",
                 name="Fan Voltage",
                 icon="mdi:sine-wave",
-                native_unit_of_measurement=ATTR_VOLTAGE,
+                native_unit_of_measurement=UnitOfElectricPotential.VOLT,
                 device_class=SensorDeviceClass.VOLTAGE,
                 state_class=SensorStateClass.MEASUREMENT,
                 value_fn=lambda x: x.fan.voltage,
@@ -303,7 +304,6 @@ def generate_global_sensors_for_healthbox(
                 name="Fan RPM",
                 icon="mdi:fan",
                 native_unit_of_measurement=REVOLUTIONS_PER_MINUTE,
-                device_class=SensorDeviceClass.SPEED,
                 state_class=SensorStateClass.MEASUREMENT,
                 value_fn=lambda x: x.fan.rpm,
             )
@@ -322,7 +322,8 @@ async def async_setup_entry(
         config_entry.entry_id
     ]
 
-    global_sensors = generate_global_sensors_for_healthbox(coordinator=coordinator)
+    global_sensors = generate_global_sensors_for_healthbox(
+        coordinator=coordinator)
     room_sensors = generate_room_sensors_for_healthbox(coordinator=coordinator)
     entities = []
 
@@ -350,7 +351,8 @@ class HealthboxGlobalSensor(
         super().__init__(coordinator)
 
         self.entity_description = description
-        self._attr_unique_id = f"{coordinator.config_entry.entry_id}-{description.key}"
+        self._attr_unique_id = f"{
+            coordinator.config_entry.entry_id}-{description.key}"
         self._attr_name = f"Healthbox {description.name}"
         self._attr_device_info = DeviceInfo(
             name=f"{coordinator.api.serial}",
@@ -383,14 +385,16 @@ class HealthboxRoomSensor(
         super().__init__(coordinator)
 
         self.entity_description = description
-        self._attr_unique_id = f"{coordinator.config_entry.entry_id}-{description.room.room_id}-{description.key}"
+        self._attr_unique_id = f"{
+            coordinator.config_entry.entry_id}-{description.room.room_id}-{description.key}"
         self._attr_name = f"{description.name}"
         self._attr_device_info = DeviceInfo(
             name=self.entity_description.room.name,
             identifiers={
                 (
                     DOMAIN,
-                    f"{coordinator.config_entry.unique_id}_{self.entity_description.room.room_id}",
+                    f"{coordinator.config_entry.unique_id}_{
+                        self.entity_description.room.room_id}",
                 )
             },
             manufacturer="Renson",
