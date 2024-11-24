@@ -17,7 +17,7 @@ MANUFACTURER = "Renson"
 ATTRIBUTION = ""
 SCAN_INTERVAL = timedelta(seconds=5)
 
-PLATFORMS = [Platform.SENSOR]
+PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR]
 
 SERVICE_START_ROOM_BOOST = "start_room_boost"
 SERVICE_START_ROOM_BOOST_SCHEMA = vol.Schema(
