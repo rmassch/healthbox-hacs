@@ -1,8 +1,6 @@
 """Sensor platform for healthbox."""
 from __future__ import annotations
 
-from decimal import Decimal
-from collections.abc import Callable
 from dataclasses import dataclass
 
 from homeassistant.core import HomeAssistant
