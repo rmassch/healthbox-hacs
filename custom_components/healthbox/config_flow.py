@@ -129,7 +129,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         """Manage the options."""
 
         errors = {}
-        host: str = self.entry.data[CONF_HOST] if CONF_HOST in self.entry.data else ""
+        host: str = self.entry.data.get(CONF_HOST, "")
         if user_input is not None:
             if (api_key := user_input.get(CONF_API_KEY)) is None:
                 errors[CONF_API_KEY] = "Invalid API Key"
@@ -137,7 +137,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 try:
                     self.hass.config_entries.async_update_entry(
                         entry=self.entry,
-                        data={CONF_HOST: host, CONF_API_KEY: user_input[CONF_API_KEY]},
+                        data={CONF_HOST: host,
+                              CONF_API_KEY: user_input[CONF_API_KEY]},
                     )
                     hb3 = Healthbox3(host=host, api_key=api_key)
                     await hb3.async_enable_advanced_api_features(pre_validation=False)
@@ -156,7 +157,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             data_schema=vol.Schema(
                 {
                     vol.Required(
-                        CONF_API_KEY, default=self.entry.data.get(CONF_API_KEY, "")
+                        CONF_API_KEY, default=self.entry.data.get(
+                            CONF_API_KEY, "")
                     ): selector.TextSelector(
                         selector.TextSelectorConfig(
                             type=selector.TextSelectorType.PASSWORD
