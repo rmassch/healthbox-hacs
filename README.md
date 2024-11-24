@@ -79,7 +79,9 @@ By default:
 * Serial Number
 * Warranty Number
 * Boost Level per room
+* Boost Time Remaining and Status
 * Airflow Ventilation Rate
+* Device Fan Power measurements
 * Profile
 
 If the API key is provided this integration will enabled the advanced API features which will expose the following sensors per room (if available):
