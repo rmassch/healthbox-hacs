@@ -50,6 +50,14 @@ class HealthboxDataUpdateCoordinator(DataUpdateCoordinator):
             update_interval=SCAN_INTERVAL,
         )
 
+    async def change_room_profile(
+        self, room_id: int, profile_name: str
+    ):
+        """Start Boosting HB Room."""
+        await self.api.async_change_room_profile(
+            room_id=room_id, profile_name=profile_name
+        )
+
     async def start_room_boost(
         self, room_id: int, boost_level: int, boost_timeout: int
     ):
@@ -66,13 +74,6 @@ class HealthboxDataUpdateCoordinator(DataUpdateCoordinator):
         """Update data via library."""
         try:
             await self.api.async_get_data()
-            # hb_data: HealthboxDataObject = HealthboxDataObject(data=data)
-            # for room in hb_data.rooms:
-            #     boost_data = await self.api.async_get_room_boost_data(room.room_id)
-
-            #     room.boost = HealthboxRoomBoost(
-            #         boost_data["level"], boost_data["enable"], boost_data["remaining"]
-            #     )
 
         except Healthbox3ApiClientAuthenticationError as exception:
             raise ConfigEntryAuthFailed(exception) from exception

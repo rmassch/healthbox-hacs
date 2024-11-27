@@ -12,6 +12,8 @@ from pyhealthbox3.healthbox3 import Healthbox3
 from .const import (
     ALL_SERVICES,
     DOMAIN,
+    SERVICE_CHANGE_ROOM_PROFILE,
+    SERVICE_CHANGE_ROOM_PROFILE_SCHEMA,
     SERVICE_START_ROOM_BOOST,
     SERVICE_START_ROOM_BOOST_SCHEMA,
     SERVICE_STOP_ROOM_BOOST,
@@ -40,13 +42,28 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if api_key:
         await api.async_enable_advanced_api_features()
 
-    coordinator = HealthboxDataUpdateCoordinator(hass=hass, entry=entry, api=api)
+    coordinator = HealthboxDataUpdateCoordinator(
+        hass=hass, entry=entry, api=api)
     await coordinator.async_config_entry_first_refresh()
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     # Define Services
+
+    async def change_room_profile(call: ServiceCall) -> None:
+        """Service to change the HB3 Room Profile"""
+        device_id = call.data["device_id"]
+        device_registry = dr.async_get(hass)
+        device = device_registry.async_get(device_id)
+        if device:
+            device_identifier = next(iter(device.identifiers))[1]
+            room_id: int = int(device_identifier.split("_")[-1])
+            await coordinator.change_room_profile(
+                room_id=room_id,
+                profile_name=call.data["profile_name"]
+            )
+
     async def start_room_boost(call: ServiceCall) -> None:
         """Service call to start boosting fans in a room."""
         device_id = call.data["device_id"]
@@ -83,7 +100,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.services.async_register(
         DOMAIN, SERVICE_STOP_ROOM_BOOST, stop_room_boost, SERVICE_STOP_ROOM_BOOST_SCHEMA
     )
-
+    hass.services.async_register(DOMAIN, SERVICE_CHANGE_ROOM_PROFILE,
+                                 change_room_profile, SERVICE_CHANGE_ROOM_PROFILE_SCHEMA)
     entry.async_on_unload(entry.add_update_listener(async_update_options))
     return True
 
