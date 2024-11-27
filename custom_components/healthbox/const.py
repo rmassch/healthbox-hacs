@@ -19,6 +19,14 @@ SCAN_INTERVAL = timedelta(seconds=5)
 
 PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR]
 
+SERVICE_CHANGE_ROOM_PROFILE = "change_room_profile"
+SERVICE_CHANGE_ROOM_PROFILE_SCHEMA = vol.Schema(
+    {
+        vol.Required(cv.CONF_DEVICE_ID): cv.string,
+        vol.Required("profile_name"): cv.string
+    }
+)
+
 SERVICE_START_ROOM_BOOST = "start_room_boost"
 SERVICE_START_ROOM_BOOST_SCHEMA = vol.Schema(
     {
@@ -33,7 +41,11 @@ SERVICE_STOP_ROOM_BOOST_SCHEMA = vol.Schema(
     {vol.Required("device_id"): cv.string},
 )
 
-ALL_SERVICES = [SERVICE_START_ROOM_BOOST, SERVICE_STOP_ROOM_BOOST]
+ALL_SERVICES = [
+    SERVICE_START_ROOM_BOOST,
+    SERVICE_STOP_ROOM_BOOST,
+    SERVICE_CHANGE_ROOM_PROFILE
+]
 
 
 class HealthboxRoomBoost:

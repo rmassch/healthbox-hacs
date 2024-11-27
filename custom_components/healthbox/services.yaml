@@ -44,3 +44,25 @@ stop_room_boost:
         device:
           integration: healthbox
           model: Healthbox Room
+change_room_profile:
+  name: Change Room Profile
+  description: Change the Room Profile
+  fields:
+    device_id:
+      name: Room
+      description: Room
+      required: true
+      selector:
+        device:
+          integration: healthbox
+          model: Healthbox Room
+    profile_name:
+      name: Profile
+      description: Healthbox3 Profile
+      required: true
+      selector:
+        select:
+          options:
+            - "Eco"
+            - "Health"
+            - "Intense"
