@@ -28,7 +28,7 @@ start_room_boost:
       selector:
         number:
           min: 5
-          max: 240
+          max: 720
           step: 1
           mode: slider
           unit_of_measurement: minutes

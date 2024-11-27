@@ -32,7 +32,7 @@ SERVICE_START_ROOM_BOOST_SCHEMA = vol.Schema(
     {
         vol.Required(cv.CONF_DEVICE_ID): cv.string,
         vol.Required("boost_level"): vol.All(int, vol.Range(min=10, max=200)),
-        vol.Required("boost_timeout"): vol.All(int, vol.Range(min=5, max=240)),
+        vol.Required("boost_timeout"): vol.All(int, vol.Range(min=5, max=720)),
     }
 )
 
