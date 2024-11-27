@@ -52,7 +52,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Define Services
 
     async def change_room_profile(call: ServiceCall) -> None:
-        """Service to change the HB3 Room Profile"""
+        """Service to change the HB3 Room Profile."""
         device_id = call.data["device_id"]
         device_registry = dr.async_get(hass)
         device = device_registry.async_get(device_id)
