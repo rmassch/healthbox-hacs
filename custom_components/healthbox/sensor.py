@@ -198,7 +198,6 @@ def generate_room_sensors_for_healthbox(
             )
     return room_sensors
 
-
 def generate_global_sensors_for_healthbox(
     coordinator: HealthboxDataUpdateCoordinator,
 ) -> list[HealthboxGlobalSensorEntityDescription]:
