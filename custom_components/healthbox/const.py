@@ -122,6 +122,19 @@ class HealthboxRoom:
         except IndexError:
             aqi = None
         return aqi
+    @property
+    def indoor_voc_ppm(self) -> Decimal | None:
+        """HB Indoor Volatile Organic Compounds."""
+        voc_ppm = None
+        try:
+            voc_ppm = [
+                sensor["parameter"]["voc"]["value"]
+                for sensor in self.sensors_data
+                if "voc" in sensor["parameter"]
+            ][0]
+        except IndexError:
+            voc_ppm = None
+        return voc_ppm
 
 
 class HealthboxDataObject:
